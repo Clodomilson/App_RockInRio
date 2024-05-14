@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rockinrio/RegisterPage.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -33,6 +34,14 @@ class LoginPage extends StatelessWidget {
                   // Implementar aqui a lógica de autenticação
                 },
                 child: Text('Login'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => RegisterPage()));
+                },
+                child: Text('Cadastre-se'),
               ),
             ],
           ),

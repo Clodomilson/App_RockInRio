@@ -58,11 +58,23 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: <Widget>[
           Flexible(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8.0),
-              reverse: true,
-              itemBuilder: (_, int index) => _buildMessage(_messages[index]),
-              itemCount: _messages.length,
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/back_chat.jpg'), // caminho para sua imagem
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  reverse: true,
+                  itemBuilder: (_, int index) => _buildMessage(_messages[index]),
+                  itemCount: _messages.length,
+                ),
+              ],
             ),
           ),
           Divider(height: 1.0),

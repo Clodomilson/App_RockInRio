@@ -24,26 +24,45 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  Widget _buildMessage(String message) {
+  Widget _buildMessage(String message, bool isMe) {
+    final alignment = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+    final borderRadius = isMe
+        ? BorderRadius.only(
+            topLeft: Radius.circular(12),
+            bottomLeft: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          )
+        : BorderRadius.only(
+            topRight: Radius.circular(12),
+            bottomLeft: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          );
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: alignment,
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: <Widget>[
+          if (!isMe)
+            Container(
+              margin: const EdgeInsets.only(right: 16.0),
+              child: CircleAvatar(child: Text('A')),
+            ),
           Container(
-            margin: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(child: Text('A')),
+            padding: const EdgeInsets.all(10.0),
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+            decoration: BoxDecoration(
+              color: isMe ? Colors.green[200] : Colors.grey[300],
+              borderRadius: borderRadius,
+            ),
+            child: Text(message),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('User', style: Theme.of(context).textTheme.subtitle1),
-              Container(
-                margin: const EdgeInsets.only(top: 5.0),
-                child: Text(message),
-              ),
-            ],
-          ),
+          if (isMe)
+            Container(
+              margin: const EdgeInsets.only(left: 16.0),
+              child: CircleAvatar(child: Text('M')),
+            ),
         ],
       ),
     );
@@ -63,7 +82,7 @@ class _ChatPageState extends State<ChatPage> {
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/back_chat.jpg'), // caminho para sua imagem
+                      image: AssetImage('assets/back_chat.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -71,7 +90,10 @@ class _ChatPageState extends State<ChatPage> {
                 ListView.builder(
                   padding: const EdgeInsets.all(8.0),
                   reverse: true,
-                  itemBuilder: (_, int index) => _buildMessage(_messages[index]),
+                  itemBuilder: (_, int index) => _buildMessage(
+                    _messages[index],
+                    index % 2 == 0, // Alterna entre mensagens enviadas pelo usuário e recebidas
+                  ),
                   itemCount: _messages.length,
                 ),
               ],

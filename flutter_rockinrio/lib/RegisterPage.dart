@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'database_helper.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -105,10 +106,17 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState?.validate() ?? false) {
-                    // Adicione a lógica de cadastro aqui
-                    print("Cadastro realizado com sucesso!");
+                    await DatabaseHelper().registerUser(
+                      _nameController.text,
+                      _cpfController.text,
+                      _emailController.text,
+                      _phoneController.text,
+                      _passwordController.text,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cadastro realizado com sucesso!')));
+                    Navigator.pop(context);
                   }
                 },
                 child: Text("Cadastrar"),

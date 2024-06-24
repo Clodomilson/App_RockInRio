@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rockinrio/RegisterPage.dart';
-import 'database_helper.dart';
+import 'package:flutter_rockinrio/database_helper.dart';
+import 'package:flutter_rockinrio/HomePage.dart'; // Importe a página principal aqui
+import 'package:flutter_rockinrio/RegisterPage.dart'; // Importe a página de cadastro aqui
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -43,7 +49,11 @@ class LoginPage extends StatelessWidget {
                   );
                   if (user != null) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login realizado com sucesso!')));
-                    // Navegar para outra tela, se necessário
+                    // Navegar para a página principal após o login
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()), // Substitua 'HomePage()' pela sua página principal
+                    );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Email ou senha inválidos')));
                   }
@@ -53,8 +63,10 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => RegisterPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                  );
                 },
                 child: Text('Cadastre-se'),
               ),

@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
-import 'database_helper.dart';
+import 'package:flutter_rockinrio/database_helper.dart';
+import 'package:flutter_rockinrio/HomePage.dart'; // Importe a página principal aqui
 
-class RegisterPage extends StatefulWidget {
-  @override
-  _RegisterPageState createState() => _RegisterPageState();
-}
-
-class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-
-  // Controllers para os campos de texto
+class RegisterPage extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
@@ -21,105 +12,73 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Register"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            // Voltar para a página de login
-            Navigator.pop(context);
-          },
-        ),
+        title: Text('Cadastro'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: "Nome"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira seu nome';
-                  }
-                  return null;
-                },
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  border: OutlineInputBorder(),
+                ),
               ),
-              TextFormField(
-                controller: _cpfController,
-                decoration: InputDecoration(labelText: "CPF"),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira seu CPF';
-                  }
-                  return null;
-                },
-              ),
+              SizedBox(height: 20),
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: "Email"),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira seu email';
-                  }
-                  return null;
-                },
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
               ),
-              TextFormField(
-                controller: _phoneController,
-                decoration: InputDecoration(labelText: "Telefone"),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira seu telefone';
-                  }
-                  return null;
-                },
-              ),
+              SizedBox(height: 20),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: "Senha"),
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  border: OutlineInputBorder(),
+                ),
                 obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira sua senha';
-                  }
-                  return null;
-                },
               ),
+              SizedBox(height: 20),
               TextFormField(
                 controller: _confirmPasswordController,
-                decoration: InputDecoration(labelText: "Confirme a Senha"),
+                decoration: InputDecoration(
+                  labelText: 'Confirme a senha',
+                  border: OutlineInputBorder(),
+                ),
                 obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, confirme sua senha';
-                  }
-                  if (value != _passwordController.text) {
-                    return 'As senhas não coincidem';
-                  }
-                  return null;
-                },
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    await DatabaseHelper().registerUser(
-                      _nameController.text,
-                      _cpfController.text,
-                      _emailController.text,
-                      _phoneController.text,
-                      _passwordController.text,
-                    );
+                  if (_passwordController.text != _confirmPasswordController.text) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('As senhas não coincidem')));
+                    return;
+                  }
+
+                  var result = await DatabaseHelper().registerUser(
+                    _nameController.text,
+                    _emailController.text,
+                    _passwordController.text,
+                  );
+
+                  if (result != -1) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cadastro realizado com sucesso!')));
-                    Navigator.pop(context);
+                    // Após o cadastro bem-sucedido, navegue para a página principal
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()), // Substitua 'HomePage()' pela sua página principal
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao cadastrar usuário')));
                   }
                 },
-                child: Text("Cadastrar"),
+                child: Text('Cadastrar'),
               ),
             ],
           ),

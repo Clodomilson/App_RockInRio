@@ -25,13 +25,13 @@ class DatabaseHelper {
 
   Future _onCreate(Database db, int version) async {
     await db.execute(
-      'CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cpf TEXT, email TEXT, phone TEXT, password TEXT)',
+      'CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, password TEXT)',
     );
   }
 
-  Future<int> registerUser(String name, String cpf, String email, String phone, String password) async {
+  Future<int> registerUser(String name, String email, String password) async {
     final db = await database;
-    var res = await db.insert('users', {'name': name, 'cpf': cpf, 'email': email, 'phone': phone, 'password': password});
+    var res = await db.insert('users', {'name': name, 'email': email, 'password': password});
     return res;
   }
 

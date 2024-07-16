@@ -37,7 +37,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _checkAuthentication() async {
-    // Usando o email do usuário autenticado passado como parâmetro
     Map<String, dynamic>? user =
         await DatabaseHelper().getUser(widget.loggedInUserEmail, "password");
     if (user != null) {
@@ -60,9 +59,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _widgetOptions = <Widget>[
-      LoginPage(), // Página de Login
-      ChatPage(), // Página de Chat
-      AboutPage(), // Página "Sobre"
+      LoginPage(),
+      ChatPage(),
+      AboutPage(),
     ];
 
     if (_isAuthenticated) {
@@ -144,8 +143,50 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     } else {
-      print("error json alowed");
-      return LoginPage();
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Home'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Bem-vindo!',
+                style: TextStyle(fontSize: 24),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
+                child: Text('Login'),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.login),
+              label: 'Login',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat),
+              label: 'Chat',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.info),
+              label: 'Sobre',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.blue,
+          onTap: _onItemTapped,
+        ),
+      );
     }
   }
 }

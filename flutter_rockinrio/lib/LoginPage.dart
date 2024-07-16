@@ -9,81 +9,36 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLogin = true;
-
-  void _toggleFormMode() {
-    setState(() {
-      _isLogin = !_isLogin;
-    });
-  }
 
   void _submit() async {
     final email = _emailController.text;
     final password = _passwordController.text;
-    print('email:  $email');
-    print('senha:  $password');
-    bool success;
-    if (_isLogin) {
-      success = await _login(email, password);
-      if (success) {
-        print('Login bem-sucedido, redirecionando para HomePage');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HomePage(loggedInUserEmail: email)),
-        );
-      }
+    bool success = await _login(email, password);
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(loggedInUserEmail: email),
+        ),
+      );
     } else {
-      final name = _nameController.text;
-      final phone = _phoneController.text;
-      success = await _register(name, email, phone, password);
-      if (success) {
-        print('Cadastro bem-sucedido, redirecionando para HomePage');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HomePage(loggedInUserEmail: email)),
-        );
-      }
-    }
-    if (!success) {
-      print('Autenticação falhou');
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Authentication failed')));
+          .showSnackBar(SnackBar(content: Text('Login falhou')));
     }
   }
 
   Future<bool> _login(String email, String password) async {
     final user = await DatabaseHelper().getUser(email, password);
-    print('Usuário encontrado: $user');
     return user != null;
-  }
-
-  Future<bool> _register(
-      String name, String email, String phone, String password) async {
-    try {
-      await DatabaseHelper().insertUser({
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'password': password,
-      });
-      return true;
-    } catch (e) {
-      print('Erro ao cadastrar: $e');
-      return false;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isLogin ? 'Login' : 'Register'),
+        title: Text('Login'),
       ),
       body: Center(
         child: Padding(
@@ -91,27 +46,6 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (!_isLogin)
-                Column(
-                  children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Nome',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: _phoneController,
-                      decoration: InputDecoration(
-                        labelText: 'Telefone',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                  ],
-                ),
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -131,14 +65,17 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submit,
-                child: Text(_isLogin ? 'Login' : 'Register'),
+                child: Text('Login'),
               ),
               SizedBox(height: 20),
               TextButton(
-                onPressed: _toggleFormMode,
-                child: Text(_isLogin
-                    ? 'Não tem uma conta? Cadastre-se'
-                    : 'Já tem uma conta? Login'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                  );
+                },
+                child: Text('Não tem uma conta? Cadastre-se'),
               ),
             ],
           ),

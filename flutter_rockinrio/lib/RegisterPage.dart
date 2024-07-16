@@ -2,12 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rockinrio/database_helper.dart';
 import 'package:flutter_rockinrio/HomePage.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  void _submit() async {
+    final name = _nameController.text;
+    final email = _emailController.text;
+    final phone = _phoneController.text;
+    final password = _passwordController.text;
+    bool success = await _register(name, email, phone, password);
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(loggedInUserEmail: email),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Cadastro falhou')));
+    }
+  }
+
+  Future<bool> _register(String name, String email, String phone, String password) async {
+    try {
+      await DatabaseHelper().insertUser({
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'password': password,
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,40 +91,8 @@ class RegisterPage extends StatelessWidget {
                 obscureText: true,
               ),
               SizedBox(height: 20),
-              TextFormField(
-                controller: _confirmPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Confirme a senha',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-              ),
-              SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () async {
-                  if (_passwordController.text != _confirmPasswordController.text) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('As senhas não coincidem')));
-                    return;
-                  }
-
-                  var result = await DatabaseHelper().insertUser({
-                    'name': _nameController.text,
-                    'email': _emailController.text,
-                    'phone': _phoneController.text,
-                    'password': _passwordController.text,
-                  });
-
-                  if (result != -1) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cadastro realizado com sucesso!')));
-                    // Após o cadastro bem-sucedido, navegue para a página principal
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage(loggedInUserEmail: _emailController.text)),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao cadastrar usuário')));
-                  }
-                },
+                onPressed: _submit,
                 child: Text('Cadastrar'),
               ),
             ],

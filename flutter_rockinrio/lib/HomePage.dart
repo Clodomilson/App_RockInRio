@@ -4,10 +4,12 @@ import 'package:flutter_rockinrio/lista_atracoes.dart';
 import 'package:flutter_rockinrio/LoginPage.dart';
 import 'package:flutter_rockinrio/AboutPage.dart';
 import 'package:flutter_rockinrio/ChatPage.dart';
-import 'package:flutter_rockinrio/RegisterPage.dart';
 import 'package:flutter_rockinrio/database_helper.dart';
 
 class HomePage extends StatefulWidget {
+  final String loggedInUserEmail;
+  HomePage({required this.loggedInUserEmail});
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -15,24 +17,29 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<Atracao> _listaFavoritos = [];
   int _selectedIndex = 0;
-
-  static List<Widget> _widgetOptions = <Widget>[
-    LoginPage(), // Página de Login
-    ChatPage(), // Página de Chat
-    AboutPage(), // Página "Sobre"
-  ];
-
-  bool _isAuthenticated = false; // Variável para verificar se o usuário está autenticado
+  bool _isAuthenticated = false;
+  List<Map<String, dynamic>> _users = [];
 
   @override
   void initState() {
     super.initState();
     _checkAuthentication();
+    _loadUsers();
+  }
+
+  Future<void> _loadUsers() async {
+    List<Map<String, dynamic>> users = await DatabaseHelper().getUsers();
+    setState(() {
+      _users = users
+          .where((user) => user['email'] != widget.loggedInUserEmail)
+          .toList();
+    });
   }
 
   Future<void> _checkAuthentication() async {
-    // Substitua os valores null pelo email e senha do usuário autenticado, se disponíveis.
-    Map<String, dynamic>? user = await DatabaseHelper().authenticateUser("email", "password");
+    // Usando o email do usuário autenticado passado como parâmetro
+    Map<String, dynamic>? user =
+        await DatabaseHelper().getUser(widget.loggedInUserEmail, "password");
     if (user != null) {
       setState(() {
         _isAuthenticated = true;
@@ -52,6 +59,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> _widgetOptions = <Widget>[
+      LoginPage(), // Página de Login
+      ChatPage(), // Página de Chat
+      AboutPage(), // Página "Sobre"
+    ];
+
     if (_isAuthenticated) {
       return Scaffold(
         appBar: AppBar(
@@ -93,9 +106,9 @@ class _HomePageState extends State<HomePage> {
                 },
                 icon: isFavorito
                     ? const Icon(
-                  Icons.favorite,
-                  color: Colors.red,
-                )
+                        Icons.favorite,
+                        color: Colors.red,
+                      )
                     : const Icon(Icons.favorite_border),
               ),
               onTap: () {
@@ -131,6 +144,7 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     } else {
+      print("error json alowed");
       return LoginPage();
     }
   }

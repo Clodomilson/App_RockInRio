@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
-import 'package:flutter_rockinrio/HomePage.dart';
+import 'package:flutter_rockinrio/LoginPage.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 void main() {
+  // Initialize sqflite for desktop (if necessary)
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: false,
       builder: (context) => RockInRio(),
     ),
   );
@@ -24,7 +33,10 @@ class RockInRio extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.indigo,
       ),
-      home: HomePage(),
+      home: LoginPage(),
+      routes: {
+        '/login': (context) => LoginPage(),
+      },
     );
   }
 }

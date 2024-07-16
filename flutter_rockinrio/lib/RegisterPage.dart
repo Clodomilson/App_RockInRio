@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rockinrio/database_helper.dart';
-import 'package:flutter_rockinrio/HomePage.dart'; // Importe a página principal aqui
+import 'package:flutter_rockinrio/HomePage.dart';
 
 class RegisterPage extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
@@ -37,6 +38,14 @@ class RegisterPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               TextFormField(
+                controller: _phoneController,
+                decoration: InputDecoration(
+                  labelText: 'Telefone',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Senha',
@@ -61,18 +70,19 @@ class RegisterPage extends StatelessWidget {
                     return;
                   }
 
-                  var result = await DatabaseHelper().registerUser(
-                    _nameController.text,
-                    _emailController.text,
-                    _passwordController.text,
-                  );
+                  var result = await DatabaseHelper().insertUser({
+                    'name': _nameController.text,
+                    'email': _emailController.text,
+                    'phone': _phoneController.text,
+                    'password': _passwordController.text,
+                  });
 
                   if (result != -1) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cadastro realizado com sucesso!')));
                     // Após o cadastro bem-sucedido, navegue para a página principal
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()), // Substitua 'HomePage()' pela sua página principal
+                      MaterialPageRoute(builder: (context) => HomePage(loggedInUserEmail: _emailController.text)),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao cadastrar usuário')));

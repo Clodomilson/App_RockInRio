@@ -155,15 +155,6 @@ class _HomePageState extends State<HomePage> {
                 'Bem-vindo!',
                 style: TextStyle(fontSize: 24),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
-                },
-                child: Text('Login'),
-              ),
             ],
           ),
         ),

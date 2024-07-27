@@ -29,6 +29,7 @@ class DatabaseHelper {
   }
 
   void _onCreate(Database db, int version) async {
+    print('Creating database and tables');
     await db.execute(
       '''
       CREATE TABLE users (
@@ -40,56 +41,84 @@ class DatabaseHelper {
       )
       '''
     );
+    print('Database and tables created');
   }
 
   void _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    print('Upgrading database from version $oldVersion to $newVersion');
     if (oldVersion < 2) {
       await db.execute("ALTER TABLE users ADD COLUMN name TEXT");
       await db.execute("ALTER TABLE users ADD COLUMN phone TEXT");
+      print('Database upgraded to version 2');
     }
   }
 
   Future<int> insertUser(Map<String, dynamic> user) async {
-    Database db = await database;
-    return await db.insert('users', user);
+    try {
+      Database db = await database;
+      return await db.insert('users', user);
+    } catch (e) {
+      print('Error inserting user: $e');
+      return -1;
+    }
   }
 
   Future<Map<String, dynamic>?> getUser(String email, String password) async {
-    Database db = await database;
-    List<Map<String, dynamic>> results = await db.query(
-      'users',
-      where: 'email = ? AND password = ?',
-      whereArgs: [email, password],
-    );
-    return results.isNotEmpty ? results.first : null;
+    try {
+      Database db = await database;
+      List<Map<String, dynamic>> results = await db.query(
+        'users',
+        where: 'email = ? AND password = ?',
+        whereArgs: [email, password],
+      );
+      return results.isNotEmpty ? results.first : null;
+    } catch (e) {
+      print('Error fetching user: $e');
+      return null;
+    }
   }
 
   Future<List<Map<String, dynamic>>> getUsers() async {
-    Database db = await database;
-    return await db.query('users');
+    try {
+      Database db = await database;
+      return await db.query('users');
+    } catch (e) {
+      print('Error fetching users: $e');
+      return [];
+    }
   }
 
   Future<int> updateUser(Map<String, dynamic> user) async {
-    Database db = await database;
-    return await db.update(
-      'users',
-      user,
-      where: 'id = ?',
-      whereArgs: [user['id']],
-    );
+    try {
+      Database db = await database;
+      return await db.update(
+        'users',
+        user,
+        where: 'id = ?',
+        whereArgs: [user['id']],
+      );
+    } catch (e) {
+      print('Error updating user: $e');
+      return -1;
+    }
   }
 
   Future<int> deleteUser(int id) async {
-    Database db = await database;
-    int userCount = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM users'))!;
-    if (userCount > 1) {
-      return await db.delete(
-        'users',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-    } else {
-      throw Exception("Cannot delete the last remaining user.");
+    try {
+      Database db = await database;
+      int userCount = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM users'))!;
+      if (userCount > 1) {
+        return await db.delete(
+          'users',
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+      } else {
+        throw Exception("Cannot delete the last remaining user.");
+      }
+    } catch (e) {
+      print('Error deleting user: $e');
+      return -1;
     }
   }
 }

@@ -8,7 +8,7 @@ import 'package:flutter_rockinrio/database_helper.dart';
 
 class HomePage extends StatefulWidget {
   final String loggedInUserEmail;
-  HomePage({required this.loggedInUserEmail});
+  const HomePage({super.key, required this.loggedInUserEmail});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _widgetOptions = <Widget>[
+    List<Widget> widgetOptions = <Widget>[
       LoginPage(),
       ChatPage(),
       AboutPage(),
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
     if (_isAuthenticated) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Atrações'),
+          title: const Text('Atrações'),
           backgroundColor: Colors.blue,
           actions: [
             Image.asset(
@@ -145,9 +145,9 @@ class _HomePageState extends State<HomePage> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Home'),
+          title: const Text('Home'),
         ),
-        body: Center(
+        body: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[

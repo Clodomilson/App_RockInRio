@@ -21,7 +21,7 @@ void main() {
 }
 
 class RockInRio extends StatelessWidget {
-  RockInRio({Key? key}) : super(key: key);
+  const RockInRio({super.key});
 
   @override
   Widget build(BuildContext context) {

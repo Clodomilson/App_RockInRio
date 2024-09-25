@@ -3,7 +3,7 @@ import 'package:flutter_rockinrio/lista_atracoes.dart';
 
 class AtracaoPage extends StatelessWidget {
   final Atracao atracao;
-  AtracaoPage({Key? key, required this.atracao}) : super(key: key);
+  const AtracaoPage({super.key, required this.atracao});
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +20,11 @@ class AtracaoPage extends StatelessWidget {
               height: 200,
               width: 200,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               atracao.descricao,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
           ],
         ),

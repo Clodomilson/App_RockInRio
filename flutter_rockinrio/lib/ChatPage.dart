@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
+  const ChatPage({super.key});
+
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -27,12 +29,12 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildMessage(String message, bool isMe) {
     final alignment = isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     final borderRadius = isMe
-        ? BorderRadius.only(
+        ? const BorderRadius.only(
             topLeft: Radius.circular(12),
             bottomLeft: Radius.circular(12),
             bottomRight: Radius.circular(12),
           )
-        : BorderRadius.only(
+        : const BorderRadius.only(
             topRight: Radius.circular(12),
             bottomLeft: Radius.circular(12),
             bottomRight: Radius.circular(12),
@@ -47,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
           if (!isMe)
             Container(
               margin: const EdgeInsets.only(right: 16.0),
-              child: CircleAvatar(child: Text('A')),
+              child: const CircleAvatar(child: Text('A')),
             ),
           Container(
             padding: const EdgeInsets.all(10.0),
@@ -61,7 +63,7 @@ class _ChatPageState extends State<ChatPage> {
           if (isMe)
             Container(
               margin: const EdgeInsets.only(left: 16.0),
-              child: CircleAvatar(child: Text('M')),
+              child: const CircleAvatar(child: Text('M')),
             ),
         ],
       ),
@@ -72,7 +74,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
+        title: const Text('Chat'),
         backgroundColor: Colors.blue,
       ),
       body: Column(
@@ -81,7 +83,7 @@ class _ChatPageState extends State<ChatPage> {
             child: Stack(
               children: <Widget>[
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/back_chat.jpg'),
                       fit: BoxFit.cover,
@@ -100,7 +102,7 @@ class _ChatPageState extends State<ChatPage> {
               ],
             ),
           ),
-          Divider(height: 1.0),
+          const Divider(height: 1.0),
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
@@ -123,7 +125,7 @@ class _ChatPageState extends State<ChatPage> {
               child: TextField(
                 controller: _controller,
                 onSubmitted: (text) => _sendMessage(),
-                decoration: InputDecoration.collapsed(
+                decoration: const InputDecoration.collapsed(
                   hintText: 'Send a message',
                 ),
               ),
@@ -131,7 +133,7 @@ class _ChatPageState extends State<ChatPage> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
               child: IconButton(
-                icon: Icon(Icons.send),
+                icon: const Icon(Icons.send),
                 onPressed: _sendMessage,
               ),
             ),
